@@ -1,0 +1,26 @@
+.header-wrapper{
+    height: 64px;
+    box-shadow: 0 2px 8px #f0f1f2;
+}
+
+.header{
+    margin:0 auto;
+    max-width: 1200px;
+    text-align: left;
+}
+
+.user-info{
+    float: right;
+}
+
+.user-info span{
+    line-height: 64px;
+}
+
+.logo{
+    line-height: 64px;
+}
+
+.logo img{
+    height:30px;
+}
