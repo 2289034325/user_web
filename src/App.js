@@ -6,6 +6,7 @@ import Footer from "./Footer";
 import {getUerInfo, saveToken} from "./utils/authority";
 import Login from "./Login";
 import {connect} from "dva";
+import {Route} from "react-router-dom";
 
 
 @connect(({ auth, loading }) => ({
@@ -53,7 +54,7 @@ class App extends Component {
         return (
             <div className="App">
                 <Header user={user} />
-                <Content />
+                <Route component={Content} />
                 <Footer />
                 <Login visible={showLogin} />
             </div>
