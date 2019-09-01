@@ -1,4 +1,4 @@
-import {getMyBooks} from '../services/vocabulary'
+import {getMyBooks,getNewWords,reviewOldWords} from '../services/vocabulary'
 
 export default {
     namespace: 'vocabulary',
@@ -18,6 +18,26 @@ export default {
                 type: 'GETMYBOOKS',
                 myBooks: response
             });
+        },
+        *getNewWords({ payload,callback }, { call, put }) {
+            let response = yield call(getNewWords, payload);
+            if(response === undefined){
+                return
+            }
+
+            // 可以用yield put，将结果connect到component
+            // 也可以直接调用callback通知component!!!
+            callback(response);
+        },
+        *reviewOldWords({ payload,callback }, { call, put }) {
+            let response = yield call(reviewOldWords, payload);
+            if(response === undefined){
+                return
+            }
+
+            // 可以用yield put，将结果connect到component
+            // 也可以直接调用callback通知component!!!
+            callback(response);
         },
     },
 

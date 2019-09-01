@@ -1,5 +1,4 @@
 import React,{ Component } from "react";
-import './App.css';
 import Header from "./Header";
 import Content from "./Content";
 import Footer from "./Footer";
@@ -8,6 +7,9 @@ import Login from "./Login";
 import {connect} from "dva";
 import {Route} from "react-router-dom";
 
+// 如果以module方式import，antd的样式就会变成层次结构，从而不能全局应用!!!
+// 下面这种方式是全局性的导入，所有antd的控件都会应用到class!!!
+import './App.less';
 
 @connect(({ auth, loading }) => ({
     token:auth.token

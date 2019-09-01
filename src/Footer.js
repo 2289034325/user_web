@@ -1,10 +1,10 @@
 import React,{ Component } from "react";
-import './Footer.css'
+import styles from './Footer.module.less'
 
 class Footer extends Component{
     render() {
         return(
-            <div className="footer">©freedom!</div>
+            <div className={styles.footer}>©freedom!</div>
         )
     }
 }

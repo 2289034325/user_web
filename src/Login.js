@@ -2,8 +2,9 @@ import React, {Component} from "react";
 import {Input, Modal, Form, Button} from "antd";
 import md5 from 'md5';
 
-import './Login.css'
 import {connect} from "dva";
+
+import styles from './Login.module.less';
 
 const FormItem = Form.Item;
 
@@ -66,7 +67,7 @@ class Login extends Component {
                 destroyOnClose
                 title="登录"
                 visible={visible}
-                className="login"
+                className={styles.login}
                 width={300}
                 closable={false}
                 footer={[<Button type="primary" onClick={()=>this.okHandler()}>登录</Button>]}
@@ -84,8 +85,8 @@ class Login extends Component {
                 <FormItem>
                     {form.getFieldDecorator('vcode', {
                         rules: [{required: true, message: '请输入验证码！'}],
-                    })(<Input placeholder="验证码" className="vcode_input"/>)}
-                    {kaptcha && <img className="vcode_img" onClick={()=>this.getKaptcha()} src={`data:image/jpg;base64,${kaptcha.img}`}/>}
+                    })(<Input placeholder="验证码" className={styles.vcodeInput}/>)}
+                    {kaptcha && <img className={styles.vcodeImg} onClick={()=>this.getKaptcha()} src={`data:image/jpg;base64,${kaptcha.img}`}/>}
                 </FormItem>
 
             </Modal>

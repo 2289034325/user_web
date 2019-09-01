@@ -1,6 +1,6 @@
 import React from 'react';
 import dva from 'dva';
-import './index.css';
+import './index.module.less';
 import {createBrowserHistory} from "history";
 import createLoading from "dva-loading";
 

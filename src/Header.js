@@ -1,8 +1,8 @@
-import React,{ Component } from "react";
+import React, {Component} from "react";
 
-import './Header.css'
 import logo from './logo.png'
-import {Link} from "react-router-dom";
+
+import styles from './Header.module.less'
 
 class Header extends Component{
     constructor(props){
@@ -11,13 +11,13 @@ class Header extends Component{
     render() {
         const{user} = this.props;
         return(
-            <div className="header-wrapper">
-                <div className="header">
-                    <a className="logo" href="/">
+            <div className={styles.headerWrapper}>
+                <div className={styles.header}>
+                    <a className={styles.logo} href="/">
                         <img src={logo} alt="logo"/>
                     </a>
                     {user &&
-                    <div className="user-info">
+                    <div className={styles.userInfo}>
                         <span>hello </span><span>{user.username}</span>
                     </div>}
                 </div>

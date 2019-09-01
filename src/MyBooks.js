@@ -1,18 +1,25 @@
 import React, {Component, Fragment} from "react";
 import {connect} from "dva";
-import {Table,Divider} from "antd";
+import {Table, Divider} from "antd";
 import moment from "moment";
+import SetCountModal from "./SetCountModal";
+
+// 文件名必须是*.module.less的格式，否则module模式不生效!!!
+import styles from "./MyBooks.module.less"
 
 @connect(({vocabulary, loading}) => ({
     myBooks: vocabulary.myBooks,
-    loading:loading
+    loading: loading
 }))
-class MyBooks extends Component{
-    constructor(props){
+class MyBooks extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             myBooks: [],
-            loading:null
+            loading: null,
+            countModalVisible: false,
+            countOKHandler: null,
+            userBookId: null
         };
     }
 
@@ -22,8 +29,8 @@ class MyBooks extends Component{
 
     // 初始化的时候不会触发该函数!!!
     componentWillReceiveProps(nextProps, nextContext) {
-        const {myBooks,loading} = nextProps;
-        this.setState({myBooks,loading});
+        const {myBooks, loading} = nextProps;
+        this.setState({myBooks, loading});
     }
 
     getMyBooks = () => {
@@ -31,6 +38,14 @@ class MyBooks extends Component{
         dispatch({
             type: 'vocabulary/getMyBooks'
         });
+    };
+
+    learnNew = (userBookId) => {
+        this.setState({countModalVisible: true, userBookId: userBookId, countOKHandler: this.learnNewHandler});
+    };
+
+    reviewOld = (userBookId) => {
+        this.setState({countModalVisible: true, userBookId: userBookId, countOKHandler: this.reviewOldHandler});
     };
 
     columns = [
@@ -59,44 +74,86 @@ class MyBooks extends Component{
             width: 100,
             dataIndex: 'last_learn_time',
             render: (text, record) => {
-                if(record.last_learn_time) {
+                if (record.last_learn_time) {
                     return moment(record.last_learn_time).format('MMDD') + "/" + record.last_learn_count;
-                }
-                else{
+                } else {
                     return "New Book!"
                 }
             }
         },
         {
             title: '待复习',
-            width: 60,
             dataIndex: 'today_need_review_count'
         },
         {
-            title: '操作',
+            title: '',
             width: 120,
             render: (text, record) => (
                 <Fragment>
-                    <a>学习</a>
-                    <Divider type="vertical" />
-                    <a>复习</a>
+                    <a onClick={() => this.learnNew(record.id)}>学习</a>
+                    <Divider type="vertical"/>
+                    <a onClick={() => this.reviewOld(record.id)}>复习</a>
                 </Fragment>
             ),
         },
     ];
 
+    countModalVisibleHandler = () => {
+        const {countModalVisible} = this.state;
+        this.setState({countModalVisible: !countModalVisible});
+    };
+
+    learnNewHandler = (count) => {
+        const {dispatch} = this.props;
+        const {userBookId} = this.state;
+        const param = {
+            userBookId: userBookId,
+            count: count
+        };
+        dispatch({
+            type: 'vocabulary/getNewWords',
+            payload: param,
+            callback: (words) => {
+                this.props.history.push(`/previewwords`, {words: words});
+            }
+        });
+
+    };
+    reviewOldHandler = (count) => {
+        const {dispatch} = this.props;
+        const {userBookId} = this.state;
+        const param = {
+            userBookId: userBookId,
+            count: count
+        };
+        dispatch({
+            type: 'vocabulary/reviewOldWords',
+            payload: param,
+            callback: (words) => {
+                this.props.history.push(`/testing`, {words: words});
+            }
+        });
+    };
+
     render() {
-        const {myBooks,loading} = this.state;
-        const dataLoading = !!(loading && loading.effects['vocabulary/getMyBooks']);
-        return(
-            <Table
-                size="middle"
-                rowKey="id"
-                pagination={false}
-                loading={dataLoading}
-                dataSource={myBooks}
-                columns={this.columns}
-            />
+        const {myBooks, loading, countModalVisible, countOKHandler} = this.state;
+
+        const dataLoading = !!(loading && loading.global);
+        return (
+            <div className={styles.wrapper}>
+                <Table
+                    size="middle"
+                    rowKey="id"
+                    pagination={false}
+                    loading={dataLoading}
+                    dataSource={myBooks}
+                    columns={this.columns}
+                />
+                <SetCountModal
+                    visible={countModalVisible}
+                    visibleHandler={this.countModalVisibleHandler}
+                    okHandler={countOKHandler}/>
+            </div>
         )
     }
 }

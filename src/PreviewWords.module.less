@@ -1,0 +1,65 @@
+@import '~antd/lib/style/themes/default.less';
+
+.wrapper{
+  text-align: left;
+  background-color: #f0f2f5;
+}
+
+.header{
+  text-align: center;
+}
+
+.wordSpell {
+  font-size: 2.5em;
+  font-family: medium-content-serif-font, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+
+.newButton {
+  display: inline-table;
+  height: 40px;
+  margin-left: 20px;
+
+  a {
+    display: table-cell;
+    text-decoration: underline;
+    vertical-align: bottom;
+  }
+}
+
+.pronounce{
+  font-family: Lucida Sans Unicode;
+}
+
+.meaning{
+  white-space: pre-line;
+}
+
+a.listItemMetaTitle {
+  color: @heading-color;
+}
+.listItemExtra {
+  //width: 272px;
+  height: 1px;
+}
+.selfTrigger {
+  margin-left: 12px;
+}
+
+@media screen and (max-width: @screen-xs) {
+  .selfTrigger {
+    display: block;
+    margin-left: 0;
+  }
+}
+@media screen and (max-width: @screen-md) {
+  .selfTrigger {
+    display: block;
+    margin-left: 0;
+  }
+}
+@media screen and (max-width: @screen-lg) {
+  .listItemExtra {
+    width: 0;
+    height: 1px;
+  }
+}

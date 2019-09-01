@@ -1,0 +1,55 @@
+@import '~antd/lib/style/themes/default.less';
+
+.explain {
+  font-size: 1.3em;
+  color: rgba(0, 0, 0, 0.75);
+}
+
+.divSentences {
+  margin-top: 10px;
+}
+
+.sentence {
+  font-size: 1.5em;
+  font-family: medium-content-serif-font, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
+.translation {
+  color: #999;
+}
+
+.listContent {
+  .description {
+    //max-width: 720px;
+    line-height: 22px;
+  }
+  .extra {
+    margin-top: 16px;
+    color: @text-color-secondary;
+    line-height: 22px;
+    & > :global(.ant-avatar) {
+      position: relative;
+      top: 1px;
+      width: 20px;
+      height: 20px;
+      margin-right: 8px;
+      vertical-align: top;
+    }
+    & > em {
+      margin-left: 16px;
+      color: @disabled-color;
+      font-style: normal;
+    }
+  }
+}
+
+@media screen and (max-width: @screen-xs) {
+  .listContent {
+    .extra {
+      & > em {
+        display: block;
+        margin-top: 8px;
+        margin-left: 0;
+      }
+    }
+  }
+}
