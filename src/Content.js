@@ -5,6 +5,7 @@ import MyBooks from "./MyBooks";
 import PreviewWords from "./PreviewWords";
 
 import styles from './Content.module.less'
+import Testing from "./Testing";
 
 class Content extends Component{
     render() {
@@ -13,7 +14,7 @@ class Content extends Component{
                 <Switch>
                     <Route path={`/mybooks`} component={MyBooks}/>
                     <Route path={`/previewwords`} component={PreviewWords}/>
-                    <Route path={`/testing`} component={PreviewWords}/>
+                    <Route path={`/testing`} component={Testing}/>
                 </Switch>
             </div>
         )

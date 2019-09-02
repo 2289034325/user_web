@@ -28,34 +28,37 @@ class PreviewWords extends Component {
 
     handleKeyPress = event => {
         const key = event.key;
-        const {words,currentIndex} = this.state;
+        const {words, currentIndex} = this.state;
 
-        if(key == "ArrowLeft"){
-            if(currentIndex>0) {
-                const i = currentIndex -1;
-                this.setState({currentIndex:i})
+        if (key == "ArrowLeft") {
+            if (currentIndex > 0) {
+                const i = currentIndex - 1;
+                this.setState({currentIndex: i})
             }
-        }
-        else if(key == "ArrowRight"){
-            if(currentIndex<words.length-1) {
-                const i = currentIndex +1;
-                this.setState({currentIndex:i})
+        } else if (key == "ArrowRight") {
+            if (currentIndex < words.length - 1) {
+                const i = currentIndex + 1;
+                this.setState({currentIndex: i})
             }
         }
     };
 
-
+    startTest = () => {
+        const {words} = this.state;
+        this.props.history.push(`/testing`, {words: words});
+    };
 
     render() {
         const {user} = this.props;
-        const {words,currentIndex} = this.state;
+        const {words, currentIndex} = this.state;
         return (
             <div className={styles.wrapper}>
                 <Card bordered={false}
                       bodyStyle={{padding: '8px 32px 8px 32px'}}
                 >
                     <div className={styles.header}>
-                        <span>{`${currentIndex+1}/${words.length}`}</span>
+                        <div className={styles.count}><span>{`${currentIndex + 1}/${words.length}`}</span></div>
+                        <div className={styles.test}><a onClick={() => this.startTest()}>测试</a></div>
                     </div>
                 </Card>
 
@@ -71,16 +74,17 @@ class PreviewWords extends Component {
                         <div>
                             <span className={styles.pronounce}>[{words[currentIndex].pronounce}]</span>
                             <span style={{marginLeft: 10}}>
-                    <a>
-                      <Icon type="sound"/>
-                    </a>
-                  </span>
+                            <a>
+                              <Icon type="sound"/>
+                            </a>
+                            </span>
                         </div>
                     )}
                     <br/>
                     {words.length && words[currentIndex].meaning && (
                         <div>
-                            <span className={styles.meaning} dangerouslySetInnerHTML={{__html: words[currentIndex].meaning}}/>
+                            <span className={styles.meaning}
+                                  dangerouslySetInnerHTML={{__html: words[currentIndex].meaning}}/>
                         </div>
                     )}
                 </Card>
@@ -94,7 +98,7 @@ class PreviewWords extends Component {
                         size="large"
                         rowKey="id"
                         itemLayout="vertical"
-                        dataSource={words.length?words[currentIndex].explains:[]}
+                        dataSource={words.length ? words[currentIndex].explains : []}
                         renderItem={item => (
                             <List.Item key={item.id} extra={<div className={styles.listItemExtra}/>}>
                                 <WordExplain item={item}/>
