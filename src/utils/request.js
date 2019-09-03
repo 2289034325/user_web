@@ -47,6 +47,7 @@ export function request(url, method, data, contentType) {
 
         })
         .catch(err => {
-            throw(err);
+            message.error('发生错误，请重新尝试')
+            console.log(err);
         });
 }

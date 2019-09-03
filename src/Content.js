@@ -12,6 +12,7 @@ class Content extends Component{
         return(
             <div className={styles.content}>
                 <Switch>
+                    <Route exact path={`/`} component={MyBooks}/>
                     <Route path={`/mybooks`} component={MyBooks}/>
                     <Route path={`/previewwords`} component={PreviewWords}/>
                     <Route path={`/testing`} component={Testing}/>

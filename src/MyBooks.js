@@ -1,6 +1,6 @@
 import React, {Component, Fragment} from "react";
 import {connect} from "dva";
-import {Table, Divider} from "antd";
+import {Table, Divider, message} from "antd";
 import moment from "moment";
 import SetCountModal from "./SetCountModal";
 
@@ -40,12 +40,12 @@ class MyBooks extends Component {
         });
     };
 
-    learnNew = (userBookId) => {
-        this.setState({countModalVisible: true, userBookId: userBookId, countOKHandler: this.learnNewHandler});
+    learnNew = (userBookId,bookId) => {
+        this.setState({countModalVisible: true, bookId, userBookId, countOKHandler: this.learnNewHandler});
     };
 
-    reviewOld = (userBookId) => {
-        this.setState({countModalVisible: true, userBookId: userBookId, countOKHandler: this.reviewOldHandler});
+    reviewOld = (userBookId,bookId) => {
+        this.setState({countModalVisible: true, bookId, userBookId: userBookId, countOKHandler: this.reviewOldHandler});
     };
 
     columns = [
@@ -90,9 +90,9 @@ class MyBooks extends Component {
             width: 120,
             render: (text, record) => (
                 <Fragment>
-                    <a onClick={() => this.learnNew(record.id)}>学习</a>
+                    <a onClick={() => this.learnNew(record.id,record.book_id)}>学习</a>
                     <Divider type="vertical"/>
-                    <a onClick={() => this.reviewOld(record.id)}>复习</a>
+                    <a onClick={() => this.reviewOld(record.id,record.book_id)}>复习</a>
                 </Fragment>
             ),
         },
@@ -105,23 +105,31 @@ class MyBooks extends Component {
 
     learnNewHandler = (count) => {
         const {dispatch} = this.props;
-        const {userBookId} = this.state;
+        const {bookId,userBookId} = this.state;
         const param = {
             userBookId: userBookId,
             count: count
         };
+
+        console.log(param);
+
         dispatch({
             type: 'vocabulary/getNewWords',
             payload: param,
             callback: (words) => {
-                this.props.history.push(`/previewwords`, {words: words});
+                if(!words.length)
+                {
+                    message.warn("没有需要学习的单词");
+                    return;
+                }
+                this.props.history.push(`/previewwords`, {words: words,bookId:bookId,userBookId:userBookId});
             }
         });
 
     };
     reviewOldHandler = (count) => {
         const {dispatch} = this.props;
-        const {userBookId} = this.state;
+        const {bookId,userBookId} = this.state;
         const param = {
             userBookId: userBookId,
             count: count
@@ -130,7 +138,12 @@ class MyBooks extends Component {
             type: 'vocabulary/reviewOldWords',
             payload: param,
             callback: (words) => {
-                this.props.history.push(`/testing`, {words: words});
+                if(!words.length)
+                {
+                    message.warn("没有需要复习的单词");
+                    return;
+                }
+                this.props.history.push(`/testing`, {words: words,bookId:bookId,userBookId:userBookId});
             }
         });
     };

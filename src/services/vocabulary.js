@@ -11,3 +11,7 @@ export async function getNewWords(params) {
 export async function reviewOldWords(params) {
     return request(`/api/dictionary/book/${params.userBookId}/review_old/${params.count}`, 'GET');
 }
+
+export async function saveRecord(params) {
+    return request(`/api/dictionary/learn/record/save`, 'POST', params);
+}

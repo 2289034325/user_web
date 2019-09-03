@@ -10,14 +10,16 @@ class PreviewWords extends Component {
         super(props);
         this.state = {
             words: [],
-            currentIndex: 0
+            currentIndex: 0,
+            bookId: 0,
+            userBookId: 0
         }
     }
 
     componentDidMount() {
-        const {words} = this.props.location.state;
+        const {words, bookId, userBookId} = this.props.location.state;
 
-        this.setState({words});
+        this.setState({words, bookId, userBookId});
 
         window.addEventListener("keydown", this.handleKeyPress);
     }
@@ -33,19 +35,30 @@ class PreviewWords extends Component {
         if (key == "ArrowLeft") {
             if (currentIndex > 0) {
                 const i = currentIndex - 1;
-                this.setState({currentIndex: i})
+
+                this.wpanel.className=styles.left;
+                setTimeout(()=>{
+                    this.setState({currentIndex: i});
+                    this.wpanel.className=styles.back;
+                },300);
+
             }
         } else if (key == "ArrowRight") {
             if (currentIndex < words.length - 1) {
                 const i = currentIndex + 1;
-                this.setState({currentIndex: i})
+
+                this.wpanel.className=styles.right;
+                setTimeout(()=>{
+                    this.setState({currentIndex: i});
+                    this.wpanel.className=styles.back;
+                },300);
             }
         }
     };
 
     startTest = () => {
-        const {words} = this.state;
-        this.props.history.push(`/testing`, {words: words});
+        const {words, bookId, userBookId} = this.state;
+        this.props.history.push(`/testing`, {words: words, bookId, userBookId});
     };
 
     render() {
@@ -61,51 +74,52 @@ class PreviewWords extends Component {
                         <div className={styles.test}><a onClick={() => this.startTest()}>测试</a></div>
                     </div>
                 </Card>
-
-                <Card
-                    style={{marginTop: 24}}
-                    bordered={false}
-                    bodyStyle={{padding: '8px 32px 20px 32px'}}
-                >
-                    <div>
-                        <span className={styles.wordSpell}>{words.length && words[currentIndex].spell}</span>
-                    </div>
-                    {words.length && words[currentIndex].pronounce && (
+                <div ref={wpanel => this.wpanel = wpanel}>
+                    <Card
+                        style={{marginTop: 24}}
+                        bordered={false}
+                        bodyStyle={{padding: '8px 32px 20px 32px'}}
+                    >
                         <div>
-                            <span className={styles.pronounce}>[{words[currentIndex].pronounce}]</span>
-                            <span style={{marginLeft: 10}}>
+                            <span className={styles.wordSpell}>{words.length && words[currentIndex].spell}</span>
+                        </div>
+                        {words.length && words[currentIndex].pronounce && (
+                            <div>
+                                <span className={styles.pronounce}>[{words[currentIndex].pronounce}]</span>
+                                <span style={{marginLeft: 10}}>
                             <a>
                               <Icon type="sound"/>
                             </a>
                             </span>
-                        </div>
-                    )}
-                    <br/>
-                    {words.length && words[currentIndex].meaning && (
-                        <div>
+                            </div>
+                        )}
+                        <br/>
+                        {words.length && words[currentIndex].meaning && (
+                            <div>
                             <span className={styles.meaning}
                                   dangerouslySetInnerHTML={{__html: words[currentIndex].meaning}}/>
-                        </div>
-                    )}
-                </Card>
-
-                <Card
-                    style={{marginTop: 5}}
-                    bordered={false}
-                    bodyStyle={{padding: '8px 32px 20px 32px'}}
-                >
-                    <List
-                        size="large"
-                        rowKey="id"
-                        itemLayout="vertical"
-                        dataSource={words.length ? words[currentIndex].explains : []}
-                        renderItem={item => (
-                            <List.Item key={item.id} extra={<div className={styles.listItemExtra}/>}>
-                                <WordExplain item={item}/>
-                            </List.Item>
+                            </div>
                         )}
-                    />
-                </Card>
+                    </Card>
+
+                    <Card
+                        style={{marginTop: 5}}
+                        bordered={false}
+                        bodyStyle={{padding: '8px 32px 20px 32px'}}
+                    >
+                        <List
+                            size="large"
+                            rowKey="id"
+                            itemLayout="vertical"
+                            dataSource={words.length ? words[currentIndex].explains : []}
+                            renderItem={item => (
+                                <List.Item key={item.id} extra={<div className={styles.listItemExtra}/>}>
+                                    <WordExplain item={item}/>
+                                </List.Item>
+                            )}
+                        />
+                    </Card>
+                </div>
             </div>
         )
     }

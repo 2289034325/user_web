@@ -1,6 +1,8 @@
 import React, {Component, Fragment} from "react";
 import styles from "./Testing.module.less";
-import {Card, Icon, Input, message, Popover} from "antd";
+import {Card, Icon, Input, message, Popover, Modal} from "antd";
+import {connect} from "dva";
+import Animate from "rc-animate";
 
 const uuidv4 = require('uuid/v4');
 
@@ -19,7 +21,7 @@ class Testing extends Component {
             // 如果在render的时候，子控件设置了不同的key，就会recreate，也就能清空之前的状态!!!
             // 但是这个key如果放在input控件上，而且如果这个控件是唯一子控件，key似乎不生效
             // 所以需要设置在input控件的父控件上!!!
-            fillKey:uuidv4()
+            fillKey: uuidv4()
         }
     }
 
@@ -45,13 +47,21 @@ class Testing extends Component {
         if (key == "ArrowLeft") {
             currentQuestion.pass = true;
 
-            this.handleNext();
+            this.qpanel.className=styles.right;
+            setTimeout(() => {
+                this.handleNext();
+                this.qpanel.className=styles.r_normal;
+            }, 300);
         }
         // 答错
         else if (key == "ArrowRight") {
             currentQuestion.stat.wrong_times += 1;
 
-            this.handleNext();
+            this.qpanel.className=styles.wrong;
+            setTimeout(() => {
+                this.handleNext();
+                this.qpanel.className=styles.w_normal;
+            }, 300);
         }
         // 查看答案
         else if (key == "Enter") {
@@ -72,7 +82,7 @@ class Testing extends Component {
             this.handleNext();
         } else {
             const dom = e.currentTarget;
-            this.setState({showAnswer: true},()=>{
+            this.setState({showAnswer: true}, () => {
                 // 让输入框失去焦点，以便让body处理左右方向键事件
                 dom.blur();
             });
@@ -82,6 +92,7 @@ class Testing extends Component {
 
     handleNext = () => {
         const {questions, currentQuestion} = this.state;
+        const {dispatch} = this.props;
         const left_qs = questions.filter(q => {
             return !(q.pass || q.stat.finished);
         });
@@ -90,21 +101,50 @@ class Testing extends Component {
             if (left_qs.length > 0) {
                 const cq = left_qs[Math.floor(Math.random() * left_qs.length)];
                 cq.stat.answer_times += 1;
-                this.setState({currentQuestion: cq, showAnswer: false,fillKey:uuidv4()});
+                this.setState({currentQuestion: cq, showAnswer: false, fillKey: uuidv4()});
             } else {
                 // 提交测试结果
-                message.info("submitting");
+                dispatch({
+                    type: 'vocabulary/saveRecord',
+                    payload: this.state.learnRecord,
+                    callback: () => {
+                        // 跳转到book页面
+                        this.props.history.push(`/mybooks`);
+                    }
+                });
             }
         } else {
             //如果只剩最后一题
             if (left_qs.length == 1) {
-                message.info("last question");
+                // 10秒钟后再回答
+                this.setState({showAnswer: false}, () => {
+                    this.countDown();
+                });
             } else {
                 const cq = left_qs[Math.floor(Math.random() * left_qs.length)];
                 cq.stat.answer_times += 1;
-                this.setState({currentQuestion: cq, showAnswer: false,fillKey:uuidv4()});
+                this.setState({currentQuestion: cq, showAnswer: false, fillKey: uuidv4()});
             }
         }
+    };
+
+    countDown = () => {
+        let secondsToGo = 5;
+        const modal = Modal.success({
+            title: '回答错误',
+            content: `将在 ${secondsToGo} 秒钟后重新回答.`,
+            okButtonProps: {disabled: true}
+        });
+        const timer = setInterval(() => {
+            secondsToGo -= 1;
+            modal.update({
+                content: `将在 ${secondsToGo} 秒钟后重新回答.`,
+            });
+        }, 1000);
+        setTimeout(() => {
+            clearInterval(timer);
+            modal.destroy();
+        }, secondsToGo * 1000);
     };
 
     createStatInfo = (bookId, userBookId, words) => {
@@ -203,7 +243,7 @@ class Testing extends Component {
     };
 
     render() {
-        const {questions, currentQuestion, showAnswer,fillKey} = this.state;
+        const {questions, currentQuestion, showAnswer, fillKey} = this.state;
 
         const leftCount = questions.filter(q => {
             return !(q.pass || q.stat.finished);
@@ -224,7 +264,7 @@ class Testing extends Component {
                         <div className={styles.finished}><a onClick={() => this.setFinished()}>已掌握</a></div>
                     </div>
                 </Card>
-
+<div ref={qpanel => this.qpanel = qpanel} >
                 <Card
                     style={{marginTop: 24}}
                     bordered={false}
@@ -277,8 +317,9 @@ class Testing extends Component {
                     </Fragment>
 
                 </Card>
+</div>
             </div>)
     }
 }
 
-export default Testing;
+export default connect()(Testing);

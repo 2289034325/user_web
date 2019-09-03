@@ -1,6 +1,8 @@
 .wrapper{
   text-align: left;
   background-color: #f0f2f5;
+  width:100%;
+  height: 100%;
 }
 
 .header{
@@ -31,4 +33,30 @@
   box-shadow:unset !important;
   webkit-box-shadow:unset !important;
   border-right-width:0px !important;
+}
+
+.r_normal{
+  transform-origin: top left;
+  transform:scale(1);
+  transition-property: transform;
+  transition-duration: 0.3s;
+}
+.w_normal{
+  transform-origin: top right;
+  transform:scale(1);
+  transition-property: transform;
+  transition-duration: 0.3s;
+}
+
+.wrong{
+  transform-origin: top right;
+  transform:scale(0.01);
+  transition-property: transform;
+  transition-duration: 0.3s;
+}
+.right{
+  transform-origin: top left;
+  transform:scale(0.01);
+  transition-property: transform;
+  transition-duration: 0.3s;
 }

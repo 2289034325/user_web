@@ -1,4 +1,4 @@
-import {getMyBooks,getNewWords,reviewOldWords} from '../services/vocabulary'
+import {getMyBooks,getNewWords,reviewOldWords,saveRecord} from '../services/vocabulary'
 
 export default {
     namespace: 'vocabulary',
@@ -39,6 +39,14 @@ export default {
             // 也可以直接调用callback通知component!!!
             callback(response);
         },
+        *saveRecord({ payload,callback }, { call, put }) {
+            let response = yield call(saveRecord, payload);
+            if(response === undefined){
+                return
+            }
+
+            callback(response);
+        }
     },
 
     reducers: {
