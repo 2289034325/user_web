@@ -1,10 +1,11 @@
 import React, {Component} from "react";
 
-import logo from './logo.png'
+import logo from '../../resources/logo.png'
 
 import styles from './Header.module.less'
 import {Button, Form, Icon, Modal, Switch} from "antd";
-import Settings from "./Settings";
+import Settings from "../global/Settings";
+import {Link} from "react-router-dom";
 
 class Header extends Component {
     constructor(props) {
@@ -22,13 +23,17 @@ class Header extends Component {
     render() {
         const {user} = this.props;
         const {showSetting} = this.state;
-
+        const currentPath = window.location.pathname;
         return (
             <div className={styles.headerWrapper}>
                 <div className={styles.header}>
                     <a className={styles.logo} href="/">
                         <img src={logo} alt="logo"/>
                     </a>
+                    <div className={styles.menuItems}>
+                        <Link to="/vocabulary/mybooks" className={`${styles.menuItem} ${currentPath.startsWith("/vocabulary")?styles.menuItemSelected:""}`}>词汇</Link>
+                        <Link to="/speech/list" className={`${styles.menuItem} ${currentPath.startsWith("/speech")?styles.menuItemSelected:""}`}>会话</Link>
+                    </div>
                     <div className={styles.headerRight}>
                         {user &&
                         <div className={styles.userInfo}>

@@ -122,7 +122,7 @@ class MyBooks extends Component {
                     message.warn("没有需要学习的单词");
                     return;
                 }
-                this.props.history.push(`/previewwords`, {words: words,bookId:bookId,userBookId:userBookId});
+                this.props.history.push(`/vocabulary/previewwords`, {words: words,bookId:bookId,userBookId:userBookId});
             }
         });
 
@@ -143,7 +143,7 @@ class MyBooks extends Component {
                     message.warn("没有需要复习的单词");
                     return;
                 }
-                this.props.history.push(`/testing`, {words: words,bookId:bookId,userBookId:userBookId});
+                this.props.history.push(`/vocabulary/testing`, {words: words,bookId:bookId,userBookId:userBookId});
             }
         });
     };

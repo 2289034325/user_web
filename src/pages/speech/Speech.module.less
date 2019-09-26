@@ -1,0 +1,81 @@
+.container{
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr;
+}
+
+.title{
+  font-weight: bold;
+  font-size:20px;
+  height: 30px;
+  text-align: center;
+}
+
+.audioWrapper{
+  width: 600px;
+  height: 50px;
+  margin: 0 auto;
+}
+
+.videoWrapperBig{
+  width: 600px;
+  height: 340px;
+  margin: 0 auto;
+}
+.videoWrapperSmall{
+  width: 600px;
+  height: 80px;
+  margin: 0 auto;
+}
+
+.toolMenu{
+  height: 24px;
+}
+
+.paragraphs{
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.performer{
+  padding-right: 10px;
+  color: #ce0a04;
+  font-weight: bolder;
+  width: 100px;
+}
+
+.performerListen{
+  cursor: pointer;
+}
+
+.paragraph{
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+.paragraph:hover{
+  background-color:rgba(24, 144, 255, 0.11) !important;
+}
+.paragraphSelected{
+  background-color:rgba(24, 144, 255, 0.11);
+  filter: brightness(105%);
+}
+
+.splitContainer{
+  flex:auto;
+}
+
+.split{
+  cursor: pointer;
+}
+.split:hover{
+  color:#1890ff;
+}
+.split.selected{
+  color:red;
+}
+
+.ButtonGroup{
+  margin-left: 5px !important;
+}

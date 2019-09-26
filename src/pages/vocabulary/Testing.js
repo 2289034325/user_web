@@ -49,8 +49,9 @@ class Testing extends Component {
 
             this.qpanel.className=styles.right;
             setTimeout(() => {
-                this.handleNext();
-                this.qpanel.className=styles.r_normal;
+                // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+                if(!this.handleNext()){
+                this.qpanel.className=styles.r_normal;}
             }, 300);
         }
         // 答错
@@ -59,8 +60,9 @@ class Testing extends Component {
 
             this.qpanel.className=styles.wrong;
             setTimeout(() => {
-                this.handleNext();
-                this.qpanel.className=styles.w_normal;
+                // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+                if(!this.handleNext()){
+                this.qpanel.className=styles.w_normal;}
             }, 300);
         }
         // 查看答案
@@ -109,9 +111,12 @@ class Testing extends Component {
                     payload: this.state.learnRecord,
                     callback: () => {
                         // 跳转到book页面
-                        this.props.history.push(`/mybooks`);
+                        this.props.history.push(`/vocabulary/mybooks`);
                     }
                 });
+
+                // 让调用方知道测试结束了，以便正确处理动画效果
+                return true;
             }
         } else {
             //如果只剩最后一题

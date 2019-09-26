@@ -2,8 +2,8 @@ import React,{ Component } from "react";
 import Header from "./Header";
 import Content from "./Content";
 import Footer from "./Footer";
-import {getUerInfo, saveToken} from "./utils/authority";
-import Login from "./Login";
+import {getUerInfo, saveToken} from "../../utils/authority";
+import Login from "../global/Login";
 import {connect} from "dva";
 import {Route} from "react-router-dom";
 

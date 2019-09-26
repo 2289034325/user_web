@@ -58,7 +58,7 @@ class PreviewWords extends Component {
 
     startTest = () => {
         const {words, bookId, userBookId} = this.state;
-        this.props.history.push(`/testing`, {words: words, bookId, userBookId});
+        this.props.history.push(`/vocabulary/testing`, {words: words, bookId, userBookId});
     };
 
     render() {
