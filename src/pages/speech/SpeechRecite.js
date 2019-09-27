@@ -161,6 +161,19 @@ class SpeechRecite extends PureComponent {
         });
     };
 
+    setScore = (h,score) =>{
+        const param = {
+            id:h.id,
+            score:score*2
+        };
+        request(`/api/speech/article/recite`, 'PUT', param).then(res => {
+            if (res !== undefined) {
+                message.success('操作成功');
+                h.score = score*2;
+            }
+        });
+    };
+
     render() {
         const {speech, selectedP, selectedS, playing, playerSize, showAnswer} = this.state;
 
@@ -285,7 +298,9 @@ class SpeechRecite extends PureComponent {
                                             <span>
                                                 {`${moment(h.submit_time).format('MM/DD HH:mm:ss')}`}
                                             </span>
-                                            <Rate allowHalf defaultValue={h.score / 2}/>
+                                            <Rate allowHalf defaultValue={h.score / 2} onChange={(value)=>{
+                                                this.setScore(h,value);
+                                            }}/>
                                         </div>
                                         <Icon className={styles.handle}
                                               size="small"
