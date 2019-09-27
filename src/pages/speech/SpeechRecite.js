@@ -5,7 +5,6 @@ import ReactPlayer from 'react-player';
 import styles from './SpeechRecite.module.less';
 import {request} from "../../utils/request";
 import moment from "moment";
-import ReactDiffViewer from 'react-diff-viewer'
 import * as JsDiff from "diff";
 
 const ButtonGroup = Button.Group;
