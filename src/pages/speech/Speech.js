@@ -111,7 +111,7 @@ class Speech extends PureComponent {
         <div className={this.getMediaWrapperClass(speech.media_type)}>
           <ReactPlayer
             ref={player => this.player = player}
-            url={speech.media_url}
+            url={speech.media_id?`/api/speech/article/media/${speech.media_id}`:""}
             onPlay={this.onPlay}
             onPause={this.onPause}
             onEnded={this.onPause}
