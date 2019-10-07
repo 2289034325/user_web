@@ -95,12 +95,13 @@ class Speech extends PureComponent {
   splitClicked = s => {
     const {mode} = this.state;
     if(mode == "read"){
-      return;
+      this.setState({selectedP:s.paragraph,selectedS:s});
     }
-
-    this.setState({selectedP:s.paragraph,selectedS:s},()=>{
-      this.playSplit(s);
-    });
+    else {
+      this.setState({selectedP: s.paragraph, selectedS: s}, () => {
+        this.playSplit(s);
+      });
+    }
   };
 
   render() {
