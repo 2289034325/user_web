@@ -217,13 +217,20 @@ class Testing extends Component {
         //随机选择一个例句
         if (word.explains.length > 0) {
 
-            const exps = word.explains.filter((e) => {
-                return e.sentences.length > 0;
-            });
-            if (exps.length > 0) {
-                const exp = exps[Math.floor(Math.random() * exps.length)];
-                sentence = exp.sentences[Math.floor(Math.random() * exp.sentences.length)];
-            }
+            // const exps = word.explains.filter((e) => {
+            //     return e.sentences.length > 0;
+            // });
+            // if (exps.length > 0) {
+            //     const exp = exps[Math.floor(Math.random() * exps.length)];
+            //     const sentences = exp.sentences.filter(st=>st.word);
+            //     sentence = sentences[Math.floor(Math.random() * sentences.length)];
+            // }
+
+            let sentences = [];
+            word.explains.forEach(exp=>{sentences = sentences.concat(exp.sentences);});
+            sentences = sentences.filter(st=>st.word);
+            sentence = sentences[Math.floor(Math.random() * sentences.length)];
+
         }
         if (sentence) {
             const split_index = sentence.sentence.indexOf(sentence.word);
