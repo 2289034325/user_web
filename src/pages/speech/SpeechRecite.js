@@ -1,12 +1,14 @@
 import React, {Fragment, PureComponent} from 'react';
-import {Button, Icon, Input, message, Rate} from 'antd';
+import {Button, Icon, Input, Menu, message, Rate} from 'antd';
 import ReactPlayer from 'react-player';
 
 import styles from './SpeechRecite.module.less';
 import {request} from "../../utils/request";
 import moment from "moment";
 import * as JsDiff from "diff";
+import {MediaUsage} from "../../utils/utils";
 
+const uuidv4 = require('uuid/v4');
 const ButtonGroup = Button.Group;
 
 class SpeechRecite extends PureComponent {
@@ -14,13 +16,14 @@ class SpeechRecite extends PureComponent {
         super(props);
 
         this.state = {
-            speech: {},
+            speech: {paragraphs: [], medias: []},
             selectedS: null,
             selected: null,
             playing: false,
             playerSize: 'small',
             showAnswer: false,
-            histories: []
+            histories: [],
+            newId: uuidv4()
         };
     }
 
@@ -98,7 +101,7 @@ class SpeechRecite extends PureComponent {
     };
 
     submitRecite = () => {
-        const {speech, selectedP, selectedS} = this.state;
+        const {speech, selectedP, selectedS, newId} = this.state;
         const text = this.textArea.textAreaRef.value;
 
         if (!text) {
@@ -140,6 +143,7 @@ class SpeechRecite extends PureComponent {
         }
 
         const param = {
+            id: newId,
             article_id: speech.id,
             paragraph_id: selectedP.id,
             split_id: selectedS.id,
@@ -155,7 +159,7 @@ class SpeechRecite extends PureComponent {
                 //unshift添加到数组开头!!!
                 selectedS.histories.unshift(res);
                 // concat后生成一个新对象，否则setState不生效!!!
-                this.setState({histories: selectedS.histories.concat([])});
+                this.setState({histories: selectedS.histories.concat([]),newId:uuidv4()});
             }
         });
     };
@@ -176,12 +180,23 @@ class SpeechRecite extends PureComponent {
     render() {
         const {speech, selectedP, selectedS, playing, playerSize, showAnswer} = this.state;
 
+        let mediaId = '';
+        let mediaType = '';
+
+        speech.medias.forEach(m => {
+            if (m.usage == MediaUsage.ORIGIN.value) {
+                mediaId = m.id;
+                const mediaName = m.name;
+                mediaType = mediaName.substr(mediaName.lastIndexOf('.') + 1);
+            }
+        });
+
         return (
             <div className={styles.container}>
-                <div className={this.getMediaWrapperClass(speech.media_type)}>
+                <div className={this.getMediaWrapperClass(mediaType)}>
                     <ReactPlayer
                         ref={player => this.player = player}
-                        url={speech.media_id?`/api/speech/article/media/${speech.media_id}`:""}
+                        url={mediaId ? `/api/speech/article/media/${mediaId}` : ''}
                         onPlay={this.onPlay}
                         onPause={this.onPause}
                         onEnded={this.onPause}

@@ -26,8 +26,8 @@ class Testing extends Component {
     }
 
     componentDidMount() {
-        const {bookId, userBookId, words} = this.props.location.state;
-        this.createStatInfo(bookId, userBookId, words);
+        const {lang, words} = this.props.location.state;
+        this.createStatInfo(lang, words);
 
         window.addEventListener("keydown", this.handleKeyPress);
     }
@@ -123,6 +123,7 @@ class Testing extends Component {
             if (left_qs.length == 1) {
                 // 10秒钟后再回答
                 this.setState({showAnswer: false}, () => {
+                    currentQuestion.stat.answer_times += 1;
                     this.countDown();
                 });
             } else {
@@ -152,12 +153,11 @@ class Testing extends Component {
         }, secondsToGo * 1000);
     };
 
-    createStatInfo = (bookId, userBookId, words) => {
+    createStatInfo = (lang, words) => {
         const lrId = uuidv4();
         const learnRecord = {
             id: lrId,
-            book_id: bookId,
-            user_book_id: userBookId,
+            lang: lang,
             word_count: words.length,
             answer_times: 0,
             wrong_times: 0,
@@ -171,8 +171,7 @@ class Testing extends Component {
         words.forEach(w => {
             const stat = {
                 learn_record_id: lrId,
-                book_id: bookId,
-                user_book_id: userBookId,
+                lang: lang,
                 word_id: w.id,
                 answer_times: 0,
                 wrong_times: 0,

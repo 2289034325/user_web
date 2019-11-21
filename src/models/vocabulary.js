@@ -1,22 +1,22 @@
-import {getMyBooks,getNewWords,reviewOldWords,saveRecord} from '../services/vocabulary'
+import {getMyWords,getNewWords,reviewOldWords,saveRecord} from '../services/vocabulary'
 
 export default {
     namespace: 'vocabulary',
 
     state: {
-        myBooks: []
+        myWords: []
     },
 
     effects: {
-        *getMyBooks({ payload,callback }, { call, put }) {
-            let response = yield call(getMyBooks, payload);
+        *getMyWords({ payload,callback }, { call, put }) {
+            let response = yield call(getMyWords, payload);
             if(response === undefined){
                 return
             }
 
             yield put({
-                type: 'GETMYBOOKS',
-                myBooks: response
+                type: 'GETMYWORDS',
+                myWords: response
             });
         },
         *getNewWords({ payload,callback }, { call, put }) {
@@ -50,10 +50,10 @@ export default {
     },
 
     reducers: {
-        GETMYBOOKS(state, action) {
+        GETMYWORDS(state, action) {
             return {
                 ...state,
-                myBooks: action.myBooks,
+                myWords: action.myWords,
             };
         }
     }

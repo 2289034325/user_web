@@ -5,54 +5,56 @@ import moment from "moment";
 import SetCountModal from "./SetCountModal";
 
 // 文件名必须是*.module.less的格式，否则module模式不生效!!!
-import styles from "./MyBooks.module.less"
+import styles from "./MyWords.module.less"
+import SelectLangInForm from "../../components/SelectLangInForm";
 
 @connect(({vocabulary, loading}) => ({
-    myBooks: vocabulary.myBooks,
+    myWords: vocabulary.myWords,
     loading: loading
 }))
-class MyBooks extends Component {
+class MyWords extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            myBooks: [],
+            myWords: [],
             loading: null,
             countModalVisible: false,
             countOKHandler: null,
-            userBookId: null
+            lang: null
         };
     }
 
     componentDidMount() {
-        this.getMyBooks();
+        this.getMyWords();
     }
 
     // 初始化的时候不会触发该函数!!!
     componentWillReceiveProps(nextProps, nextContext) {
-        const {myBooks, loading} = nextProps;
-        this.setState({myBooks, loading});
+        const {myWords, loading} = nextProps;
+        this.setState({myWords, loading});
     }
 
-    getMyBooks = () => {
+    getMyWords = () => {
         const {dispatch} = this.props;
         dispatch({
-            type: 'vocabulary/getMyBooks'
+            type: 'vocabulary/getMyWords'
         });
     };
 
-    learnNew = (userBookId,bookId) => {
-        this.setState({countModalVisible: true, bookId, userBookId, countOKHandler: this.learnNewHandler});
+    learnNew = (lang) => {
+        this.setState({countModalVisible: true, lang, countOKHandler: this.learnNewHandler});
     };
 
-    reviewOld = (userBookId,bookId) => {
-        this.setState({countModalVisible: true, bookId, userBookId: userBookId, countOKHandler: this.reviewOldHandler});
+    reviewOld = (lang) => {
+        this.setState({countModalVisible: true, lang, countOKHandler: this.reviewOldHandler});
     };
 
     columns = [
         {
-            title: '名称',
-            width: 80,
-            dataIndex: 'name'
+            title: '语言',
+            width: 60,
+            dataIndex: 'lang',
+            render: val => SelectLangInForm.getLangName(val),
         },
         {
             title: '未开始',
@@ -75,24 +77,24 @@ class MyBooks extends Component {
             dataIndex: 'last_learn_time',
             render: (text, record) => {
                 if (record.last_learn_time) {
-                    return moment(record.last_learn_time).format('MMDD') + "/" + record.last_learn_count;
+                    return moment(record.last_learn_time).format('MM月DD日') + "/" + record.last_learn_count;
                 } else {
-                    return "New Book!"
+                    return "";
                 }
             }
         },
         {
             title: '待复习',
-            dataIndex: 'today_need_review_count'
+            dataIndex: 'needreview_count'
         },
         {
             title: '',
             width: 120,
             render: (text, record) => (
                 <Fragment>
-                    <a onClick={() => this.learnNew(record.id,record.book_id)}>学习</a>
+                    <a onClick={() => this.learnNew(record.lang)}>学习</a>
                     <Divider type="vertical"/>
-                    <a onClick={() => this.reviewOld(record.id,record.book_id)}>复习</a>
+                    <a onClick={() => this.reviewOld(record.lang)}>复习</a>
                 </Fragment>
             ),
         },
@@ -105,13 +107,11 @@ class MyBooks extends Component {
 
     learnNewHandler = (count) => {
         const {dispatch} = this.props;
-        const {bookId,userBookId} = this.state;
+        const {lang} = this.state;
         const param = {
-            userBookId: userBookId,
+            lang: lang,
             count: count
         };
-
-        console.log(param);
 
         dispatch({
             type: 'vocabulary/getNewWords',
@@ -122,16 +122,16 @@ class MyBooks extends Component {
                     message.warn("没有需要学习的单词");
                     return;
                 }
-                this.props.history.push(`/vocabulary/previewwords`, {words: words,bookId:bookId,userBookId:userBookId});
+                this.props.history.push(`/vocabulary/previewwords`, {words: words,lang: lang});
             }
         });
 
     };
     reviewOldHandler = (count) => {
         const {dispatch} = this.props;
-        const {bookId,userBookId} = this.state;
+        const {lang} = this.state;
         const param = {
-            userBookId: userBookId,
+            lang: lang,
             count: count
         };
         dispatch({
@@ -143,13 +143,13 @@ class MyBooks extends Component {
                     message.warn("没有需要复习的单词");
                     return;
                 }
-                this.props.history.push(`/vocabulary/testing`, {words: words,bookId:bookId,userBookId:userBookId});
+                this.props.history.push(`/vocabulary/testing`, {words: words,lang: lang});
             }
         });
     };
 
     render() {
-        const {myBooks, loading, countModalVisible, countOKHandler} = this.state;
+        const {myWords, loading, countModalVisible, countOKHandler} = this.state;
 
         const dataLoading = !!(loading && loading.global);
         return (
@@ -159,7 +159,7 @@ class MyBooks extends Component {
                     rowKey="id"
                     pagination={false}
                     loading={dataLoading}
-                    dataSource={myBooks}
+                    dataSource={myWords}
                     columns={this.columns}
                 />
                 <SetCountModal
@@ -171,4 +171,4 @@ class MyBooks extends Component {
     }
 }
 
-export default MyBooks;
+export default MyWords;

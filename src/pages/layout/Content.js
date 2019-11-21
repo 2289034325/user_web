@@ -1,7 +1,7 @@
 import React,{ Component } from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 
-import MyBooks from "../vocabulary/MyBooks";
+import MyWords from "../vocabulary/MyWords";
 import PreviewWords from "../vocabulary/PreviewWords";
 
 import styles from './Content.module.less'
@@ -16,7 +16,7 @@ class Content extends Component{
             <div className={styles.content}>
                 <Switch>
                     <Redirect exact from={`/`} to={`/vocabulary/mybooks`} />
-                    <Route path={`/vocabulary/mybooks`} component={MyBooks}/>
+                    <Route path={`/vocabulary/mybooks`} component={MyWords}/>
                     <Route path={`/vocabulary/previewwords`} component={PreviewWords}/>
                     <Route path={`/vocabulary/testing`} component={Testing}/>
                     <Route path={`/speech/list`} component={SpeechList}/>

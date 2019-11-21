@@ -11,15 +11,14 @@ class PreviewWords extends Component {
         this.state = {
             words: [],
             currentIndex: 0,
-            bookId: 0,
-            userBookId: 0
+            lang: 0
         }
     }
 
     componentDidMount() {
-        const {words, bookId, userBookId} = this.props.location.state;
+        const {words, lang} = this.props.location.state;
 
-        this.setState({words, bookId, userBookId});
+        this.setState({words, lang});
 
         window.addEventListener("keydown", this.handleKeyPress);
     }
@@ -57,12 +56,11 @@ class PreviewWords extends Component {
     };
 
     startTest = () => {
-        const {words, bookId, userBookId} = this.state;
-        this.props.history.push(`/vocabulary/testing`, {words: words, bookId, userBookId});
+        const {words, lang} = this.state;
+        this.props.history.push(`/vocabulary/testing`, {words: words, lang: lang});
     };
 
     render() {
-        const {user} = this.props;
         const {words, currentIndex} = this.state;
         return (
             <div className={styles.wrapper}>

@@ -37,7 +37,7 @@ class Header extends Component {
                     <div className={styles.headerRight}>
                         {user &&
                         <div className={styles.userInfo}>
-                            <span>hello </span><span>{user.username}</span>
+                            <span>hello </span><span>{user.name}</span>
                         </div>}
                         <div className={styles.setting}>
                             <Button type={"link"} onClick={()=>this.setState({showSetting:true})}><Icon type="setting"/></Button>

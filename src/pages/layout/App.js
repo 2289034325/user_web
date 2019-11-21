@@ -38,9 +38,10 @@ class App extends Component {
     componentWillReceiveProps(nextProps, nextContext) {
         const{token} = nextProps;
         if(token){
-            saveToken(token.token);
+            saveToken(token);
         }
         let user = getUerInfo();
+
         // todo 或者token过期
         if(!user){
             this.setState({showLogin:true})
@@ -51,7 +52,6 @@ class App extends Component {
     }
 
     render(){
-        const{token} = this.props;
         const{showLogin,user} = this.state;
         return (
             <div className="App">

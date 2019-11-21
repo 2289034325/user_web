@@ -1,9 +1,10 @@
 import React, {Fragment, PureComponent} from 'react';
-import {Button,} from 'antd';
+import {Button, Dropdown, Menu,} from 'antd';
 import ReactPlayer from 'react-player';
 
 import styles from './Speech.module.less';
 import {request} from "../../utils/request";
+import {MediaUsage} from "../../utils/utils";
 
 const ButtonGroup = Button.Group;
 
@@ -12,12 +13,13 @@ class Speech extends PureComponent {
     super(props);
 
     this.state = {
-      speech:{},
+      speech:{paragraphs: [], medias: []},
       selectedS:null,
       selected:null,
       playing:false,
       playerSize:'small',
-      mode:'listen'
+      mode:'listen',
+      mediaUsage: MediaUsage.ORIGIN.value,
     };
   }
 
@@ -105,14 +107,46 @@ class Speech extends PureComponent {
   };
 
   render() {
-    const { speech, selectedP, selectedS, playing, playerSize,mode } = this.state;
+    const { speech, selectedP, selectedS, playing, playerSize,mode,mediaUsage } = this.state;
+
+    let mediaId = '';
+    let mediaType = '';
+
+    speech.medias.forEach(m => {
+      if (m.usage == mediaUsage) {
+        mediaId = m.id;
+        const mediaName = m.name;
+        mediaType = mediaName.substr(mediaName.lastIndexOf('.') + 1);
+      }
+    });
+
+    const selectVideoMenu = (
+        <Menu>
+          <Menu.Item>
+            <a onClick={() => {
+              this.setState({ mediaUsage: MediaUsage.ORIGIN.value });
+            }}
+            >
+              原声
+            </a>
+          </Menu.Item>
+          <Menu.Item>
+            <a onClick={() => {
+              this.setState({ mediaUsage: MediaUsage.EXPLAIN.value });
+            }}
+            >
+              讲解
+            </a>
+          </Menu.Item>
+        </Menu>
+    );
 
     return (
       <div className={styles.container}>
-        <div className={this.getMediaWrapperClass(speech.media_type)}>
+        <div className={this.getMediaWrapperClass(mediaType)}>
           <ReactPlayer
             ref={player => this.player = player}
-            url={speech.media_id?`/api/speech/article/media/${speech.media_id}`:""}
+            url={mediaId ? `/api/speech/article/media/${mediaId}` : ''}
             onPlay={this.onPlay}
             onPause={this.onPause}
             onEnded={this.onPause}
@@ -153,6 +187,9 @@ class Speech extends PureComponent {
                   }
                 }}
             />
+            <Dropdown overlay={selectVideoMenu} placement="bottomCenter">
+              <Button size="small" icon="select" title="选择观看视频" />
+            </Dropdown>
           </ButtonGroup>
         </div>
         <div className={styles.paragraphs}>
