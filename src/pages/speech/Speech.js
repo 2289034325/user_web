@@ -35,12 +35,18 @@ class Speech extends PureComponent {
   getSpeech = (id) => {
     request(`/api/speech/article/${id}`, 'GET').then(res=>{
       if(res !== undefined){
+        const ps = res.paragraphs;
+        ps.sort((a, b) => a.index - b.index);
+
         // 为了让每个split也能引用到paragraph
-        res.paragraphs.forEach(p => {
+        ps.forEach(p => {
           if (p.splits) {
             p.splits.forEach(s => {
               s.paragraph = p;
             });
+
+            // 按照index排序
+            p.splits.sort((a, b) => a.index - b.index);
           }
         });
         this.setState({speech:res});
