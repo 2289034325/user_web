@@ -111,12 +111,14 @@ class Speech extends PureComponent {
 
     let mediaId = '';
     let mediaType = '';
+    let mediaUrl = '';
 
     speech.medias.forEach(m => {
       if (m.usage == mediaUsage) {
         mediaId = m.id;
         const mediaName = m.name;
         mediaType = mediaName.substr(mediaName.lastIndexOf('.') + 1);
+        mediaUrl = m.url;
       }
     });
 
@@ -146,7 +148,7 @@ class Speech extends PureComponent {
         <div className={this.getMediaWrapperClass(mediaType)}>
           <ReactPlayer
             ref={player => this.player = player}
-            url={mediaId ? `/api/speech/article/media/${mediaId}` : ''}
+            url={mediaUrl}
             onPlay={this.onPlay}
             onPause={this.onPause}
             onEnded={this.onPause}
