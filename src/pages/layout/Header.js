@@ -33,6 +33,7 @@ class Header extends Component {
                     <div className={styles.menuItems}>
                         <Link to="/vocabulary/mybooks" className={`${styles.menuItem} ${currentPath.startsWith("/vocabulary")?styles.menuItemSelected:""}`}>词汇</Link>
                         <Link to="/speech/list" className={`${styles.menuItem} ${currentPath.startsWith("/speech")?styles.menuItemSelected:""}`}>会话</Link>
+                        <Link to="/writing/list" className={`${styles.menuItem} ${currentPath.startsWith("/writing")?styles.menuItemSelected:""}`}>范文</Link>
                     </div>
                     <div className={styles.headerRight}>
                         {user &&

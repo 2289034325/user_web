@@ -9,6 +9,8 @@ import Testing from "../vocabulary/Testing";
 import SpeechList from "../speech/SpeechList";
 import Speech from "../speech/Speech";
 import SpeechRecite from "../speech/SpeechRecite";
+import ArticleList from "../writing/ArticleList";
+import ArticleRecite from "../writing/ArticleRecite";
 
 class Content extends Component{
     render() {
@@ -22,6 +24,8 @@ class Content extends Component{
                     <Route path={`/speech/list`} component={SpeechList}/>
                     <Route exact path={`/speech/:id`} component={Speech}/>
                     <Route path={`/speech/recite/:id`} component={SpeechRecite}/>
+                    <Route path={`/writing/list`} component={ArticleList}/>
+                    <Route path={`/writing/recite/:id`} component={ArticleRecite}/>
                 </Switch>
             </div>
         )
