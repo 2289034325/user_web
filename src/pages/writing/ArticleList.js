@@ -29,7 +29,7 @@ class ArticleList extends Component {
     columns = [
         {
             title: '来源',
-            width: 200,
+            width: 100,
             dataIndex: 'source'
         },
         {
@@ -41,7 +41,13 @@ class ArticleList extends Component {
         {
             title: '名称',
             dataIndex: 'title',
+            width: 300,
             render: (text,record) => <a onClick={() => this.props.history.push(`/writing/recite/${record.id}`)}>{text}</a>,
+        },
+        {
+            title: '描述',
+            dataIndex: 'description',
+            render: text => <div title={text} style={{whiteSpace:"nowrap",textOverflow:"ellipsis",overflow:"hidden"}}>{text}</div>
         }
     ];
 

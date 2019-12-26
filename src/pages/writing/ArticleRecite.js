@@ -84,39 +84,40 @@ class ArticleRecite extends PureComponent {
             return;
         }
 
-        //计算分数
-        let originText = selectedP.text.substring(selectedS.start_index, selectedS.end_index + 1);
-        let diffs = JsDiff.diffWords(originText, text, {ignoreCase: true});
-        let wrong_count = 0;
-        diffs.forEach(d => {
-            if (d.removed) {
-                //空格和符号不算错误
-                // if (!/[\ |\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?]/.test(d.value)) {
-                //     wrong_count++;
-                // }
-                let match = d.value.match(/[a-zA-Z]+\b/g);
-                if (match) {
-                    // 如果错的是短语扣2分，句子扣5分
-                    if (match.length == 1) {
-                        wrong_count += 1;
-                    }
-                    // 3个词之内算短语
-                    else if (match.length > 1 && match.length <= 3) {
-                        wrong_count += 2;
-                    }
-                    // 超过3个词算句子
-                    else {
-                        wrong_count += 5;
-                    }
-                }
-            }
-        });
-
-        // 一共10分，错一个减一分
-        let score = 10 - wrong_count;
-        if (score < 0) {
-            score = 0;
-        }
+        // 已改为在后台计算
+        // //计算分数
+        // let originText = selectedP.text.substring(selectedS.start_index, selectedS.end_index + 1);
+        // let diffs = JsDiff.diffWords(originText, text, {ignoreCase: true});
+        // let wrong_count = 0;
+        // diffs.forEach(d => {
+        //     if (d.removed) {
+        //         //空格和符号不算错误
+        //         // if (!/[\ |\~|\`|\!|\@|\#|\$|\%|\^|\&|\*|\(|\)|\-|\_|\+|\=|\||\\|\[|\]|\{|\}|\;|\:|\"|\'|\,|\<|\.|\>|\/|\?]/.test(d.value)) {
+        //         //     wrong_count++;
+        //         // }
+        //         let match = d.value.match(/[a-zA-Z]+\b/g);
+        //         if (match) {
+        //             // 如果错的是短语扣2分，句子扣5分
+        //             if (match.length == 1) {
+        //                 wrong_count += 1;
+        //             }
+        //             // 3个词之内算短语
+        //             else if (match.length > 1 && match.length <= 3) {
+        //                 wrong_count += 2;
+        //             }
+        //             // 超过3个词算句子
+        //             else {
+        //                 wrong_count += 5;
+        //             }
+        //         }
+        //     }
+        // });
+        //
+        // // 一共10分，错一个减一分
+        // let score = 10 - wrong_count;
+        // if (score < 0) {
+        //     score = 0;
+        // }
 
         const param = {
             id: newId,
@@ -124,7 +125,7 @@ class ArticleRecite extends PureComponent {
             paragraph_id: selectedP.id,
             split_id: selectedS.id,
             content: text,
-            score: score
+            score: 0
         };
         request(`/api/writing/article/recite`, 'POST', param).then(res => {
             if (res !== undefined) {
@@ -143,12 +144,12 @@ class ArticleRecite extends PureComponent {
     setScore = (h, score) => {
         const param = {
             id: h.id,
-            score: score * 2
+            score: score
         };
         request(`/api/writing/article/recite`, 'PUT', param).then(res => {
             if (res !== undefined) {
                 message.success('操作成功');
-                h.score = score * 2;
+                h.score = score;
             }
         });
     };
@@ -218,11 +219,14 @@ class ArticleRecite extends PureComponent {
                         {selectedS && selectedS.histories &&
                         selectedS.histories.map(h => {
                             let originText = selectedP.text.substring(selectedS.start_index, selectedS.end_index + 1);
-                            let diff = JsDiff.diffWords(originText, h.content);
+                            // let diff = JsDiff.diffWords(originText, h.content);
+                            console.log(h);
+                            let diff = h.diffs;
                             let diffText = diff.map((d, i) => {
                                 return (
                                     <span key={i}
-                                          className={`${(d.added ? styles.added : (d.removed ? styles.removed : styles.origin))}`}>{d.value}</span>
+                                          className={`${(d.operation == "INSERT" ? styles.added : (d.operation == "DELETE" ? styles.removed : styles.origin))}`}>{d.text}
+                                    </span>
                                 );
                             });
 
@@ -247,7 +251,7 @@ class ArticleRecite extends PureComponent {
                                             <span>
                                                 {`${moment(h.submit_time).format('MM/DD HH:mm:ss')}`}
                                             </span>
-                                            <Rate allowHalf defaultValue={h.score / 2} onChange={(value) => {
+                                            <Rate allowHalf defaultValue={h.score} onChange={(value) => {
                                                 this.setScore(h, value);
                                             }}/>
                                         </div>
