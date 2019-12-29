@@ -220,7 +220,6 @@ class ArticleRecite extends PureComponent {
                         selectedS.histories.map(h => {
                             let originText = selectedP.text.substring(selectedS.start_index, selectedS.end_index + 1);
                             // let diff = JsDiff.diffWords(originText, h.content);
-                            console.log(h);
                             let diff = h.diffs;
                             let diffText = diff.map((d, i) => {
                                 return (
