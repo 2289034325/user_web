@@ -222,9 +222,14 @@ class ArticleRecite extends PureComponent {
                             // let diff = JsDiff.diffWords(originText, h.content);
                             let diff = h.diffs;
                             let diffText = diff.map((d, i) => {
+
                                 return (
                                     <span key={i}
-                                          className={`${(d.operation == "INSERT" ? styles.added : (d.operation == "DELETE" ? styles.removed : styles.origin))}`}>{d.text}
+                                          className={`${(d.operation == "INSERT" ? 
+                                              styles.added : (d.operation == "DELETE" ? 
+                                                  styles.removed : ((d.operation == "WARNING_ORIGIN" ? 
+                                                      styles.removed : (d.operation == "WARNING" ?
+                                                          styles.warning : styles.origin)))))}`}>{d.text}
                                     </span>
                                 );
                             });
