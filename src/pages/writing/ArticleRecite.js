@@ -19,7 +19,8 @@ class ArticleRecite extends PureComponent {
             selected: null,
             showAnswer: false,
             histories: [],
-            newId: uuidv4()
+            newId: uuidv4(),
+            writing: false
         };
     }
 
@@ -155,7 +156,7 @@ class ArticleRecite extends PureComponent {
     };
 
     render() {
-        const {article, selectedP, selectedS, showAnswer} = this.state;
+        const {article, selectedP, selectedS, writing} = this.state;
 
         return (
             <div className={styles.container}>
@@ -176,7 +177,7 @@ class ArticleRecite extends PureComponent {
                                         return (
                                             <span
                                                 key={s.id}
-                                                className={`${(selectedS && selectedS.id === s.id) ? styles.splitSelected : styles.split} ${showAnswer ? styles.show : ""}`}
+                                                className={`${(selectedS && selectedS.id === s.id) ? styles.splitSelected : styles.split} ${writing ? styles.hide : ""}`}
                                                 onClick={() => this.splitClicked(s)}
                                             >
                         {p.text.substring(s.start_index, s.end_index + 1)}
@@ -190,19 +191,7 @@ class ArticleRecite extends PureComponent {
                 </div>
                 <div className={styles.writingContainer}>
                     <div className={styles.toolbar}>
-                        <ButtonGroup className={styles.left}>
-                            <Button
-                                size="small"
-                                icon={showAnswer ? 'eye-invisible' : 'eye'}
-                                disabled={!selectedS}
-                                onClick={() => {
-                                    if (showAnswer) {
-                                        this.setState({showAnswer: false});
-                                    } else {
-                                        this.setState({showAnswer: true});
-                                    }
-                                }}
-                            />
+                        <ButtonGroup className={styles.right}>
                             <Button className={styles.right}
                                     size="small"
                                     icon="save"
@@ -212,6 +201,8 @@ class ArticleRecite extends PureComponent {
                         </ButtonGroup>
                     </div>
                     <Input.TextArea
+                        onFocus={()=>{this.setState({writing:true})}}
+                        onBlur={()=>{this.setState({writing:false})}}
                         ref={ta => this.textArea = ta}
                         className={styles.textArea}
                         autosize={{minRows: 5, maxRows: 20}}/>
