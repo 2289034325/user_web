@@ -29,29 +29,38 @@ class PreviewWords extends Component {
 
     handleKeyPress = event => {
         const key = event.key;
-        const {words, currentIndex} = this.state;
 
         if (key == "ArrowLeft") {
-            if (currentIndex > 0) {
-                const i = currentIndex - 1;
-
-                this.wpanel.className=styles.left;
-                setTimeout(()=>{
-                    this.setState({currentIndex: i});
-                    this.wpanel.className=styles.back;
-                },300);
-
-            }
+            this.previous();
         } else if (key == "ArrowRight") {
-            if (currentIndex < words.length - 1) {
-                const i = currentIndex + 1;
+            this.next();
+        }
+    };
 
-                this.wpanel.className=styles.right;
-                setTimeout(()=>{
-                    this.setState({currentIndex: i});
-                    this.wpanel.className=styles.back;
-                },300);
-            }
+    previous = ()=>{
+        const {words, currentIndex} = this.state;
+        if (currentIndex > 0) {
+            const i = currentIndex - 1;
+
+            this.wpanel.className=`${styles.wwrapper} ${styles.left}`;
+            setTimeout(()=>{
+                this.setState({currentIndex: i});
+                this.wpanel.className=`${styles.wwrapper} ${styles.back}`;
+            },300);
+
+        }
+    };
+
+    next = ()=>{
+        const {words, currentIndex} = this.state;
+        if (currentIndex < words.length - 1) {
+            const i = currentIndex + 1;
+
+            this.wpanel.className=`${styles.wwrapper} ${styles.right}`;
+            setTimeout(()=>{
+                this.setState({currentIndex: i});
+                this.wpanel.className=`${styles.wwrapper} ${styles.back}`;
+            },300);
         }
     };
 
@@ -64,20 +73,16 @@ class PreviewWords extends Component {
         const {words, currentIndex} = this.state;
         return (
             <div className={styles.wrapper}>
-                <Card bordered={false}
-                      bodyStyle={{padding: '8px 32px 8px 32px'}}
-                >
-                    <div className={styles.header}>
-                        <div className={styles.count}><span>{`${currentIndex + 1}/${words.length}`}</span></div>
-                        <div className={styles.test}><a onClick={() => this.startTest()}>测试</a></div>
+                <div className={styles.header}>
+                    <div className={styles.count}><span>{`${currentIndex + 1}/${words.length}`}</span></div>
+                    <div className={styles.btns}>
+                        <a onClick={() => this.previous()}>上一个</a>
+                        <a onClick={() => this.next()}>下一个</a>
+                        <a onClick={() => this.startTest()}>开始测试</a>
                     </div>
-                </Card>
-                <div ref={wpanel => this.wpanel = wpanel}>
-                    <Card
-                        style={{marginTop: 24}}
-                        bordered={false}
-                        bodyStyle={{padding: '8px 32px 20px 32px'}}
-                    >
+                </div>
+                <div ref={wpanel => this.wpanel = wpanel} className={styles.wwrapper}>
+                    <div className={styles.word}>
                         <div>
                             <span className={styles.wordSpell}>{words.length && words[currentIndex].spell}</span>
                         </div>
@@ -98,13 +103,8 @@ class PreviewWords extends Component {
                                   dangerouslySetInnerHTML={{__html: words[currentIndex].meaning}}/>
                             </div>
                         )}
-                    </Card>
-
-                    <Card
-                        style={{marginTop: 5}}
-                        bordered={false}
-                        bodyStyle={{padding: '8px 32px 20px 32px'}}
-                    >
+                    </div>
+                    <div className={styles.sts}>
                         <List
                             size="large"
                             rowKey="id"
@@ -116,7 +116,7 @@ class PreviewWords extends Component {
                                 </List.Item>
                             )}
                         />
-                    </Card>
+                    </div>
                 </div>
             </div>
         )

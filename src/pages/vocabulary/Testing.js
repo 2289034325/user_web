@@ -1,15 +1,24 @@
 import React, {Component, Fragment} from "react";
 import styles from "./Testing.module.less";
-import {Card, Icon, Input, message, Popover, Modal} from "antd";
+import {Card, Icon, Input, message, Popover, Modal, List} from "antd";
 import {connect} from "dva";
 import Animate from "rc-animate";
+import WordExplain from "./WordExplain";
 
 const uuidv4 = require('uuid/v4');
 
 class Testing extends Component {
     constructor(props) {
         super(props);
+        let settings = {};
+        const settingsStr = localStorage.getItem('settings') || '';
+
+        if (settingsStr) {
+            settings = JSON.parse(settingsStr);
+        }
+
         this.state = {
+            settings: settings,
             words: [],
             questions: [],
             currentQuestion: null,
@@ -21,7 +30,8 @@ class Testing extends Component {
             // 如果在render的时候，子控件设置了不同的key，就会recreate，也就能清空之前的状态!!!
             // 但是这个key如果放在input控件上，而且如果这个控件是唯一子控件，key似乎不生效
             // 所以需要设置在input控件的父控件上!!!
-            fillKey: uuidv4()
+            fillKey: uuidv4(),
+            mode:'A'
         }
     }
 
@@ -45,31 +55,59 @@ class Testing extends Component {
         const {questions, currentQuestion} = this.state;
         // 答对
         if (key == "ArrowLeft") {
-            currentQuestion.pass = true;
-
-            this.qpanel.className=styles.right;
-            setTimeout(() => {
-                // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
-                if(!this.handleNext()){
-                this.qpanel.className=styles.r_normal;}
-            }, 300);
+            // currentQuestion.pass = true;
+            //
+            // this.qpanel.className=styles.right;
+            // setTimeout(() => {
+            //     // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+            //     if(!this.handleNext()){
+            //     this.qpanel.className=styles.r_normal;}
+            // }, 300);
+            this.answerRight();
         }
         // 答错
         else if (key == "ArrowRight") {
-            currentQuestion.stat.wrong_times += 1;
-
-            this.qpanel.className=styles.wrong;
-            setTimeout(() => {
-                // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
-                if(!this.handleNext()){
-                this.qpanel.className=styles.w_normal;}
-            }, 300);
+            // currentQuestion.stat.wrong_times += 1;
+            //
+            // this.qpanel.className=styles.wrong;
+            // setTimeout(() => {
+            //     // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+            //     if(!this.handleNext()){
+            //     this.qpanel.className=styles.w_normal;}
+            // }, 300);
+            this.answerWrong();
         }
         // 查看答案
         else if (key == "Enter") {
             currentQuestion.stat.wrong_times += 1;
             this.setState({showAnswer: true});
         }
+    };
+
+    answerRight = () => {
+        const {questions, currentQuestion} = this.state;
+        currentQuestion.pass = true;
+
+        this.qpanel.className = styles.right;
+        setTimeout(() => {
+            // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+            if (!this.handleNext()) {
+                this.qpanel.className = styles.r_normal;
+            }
+        }, 300);
+    };
+
+    answerWrong = () => {
+        const {questions, currentQuestion} = this.state;
+        currentQuestion.stat.wrong_times += 1;
+
+        this.qpanel.className = styles.wrong;
+        setTimeout(() => {
+            // 这里需要判断是否测试已经结束，发生页面跳转，否则直接处理动画效果可能会出错
+            if (!this.handleNext()) {
+                this.qpanel.className = styles.w_normal;
+            }
+        }, 300);
     };
 
     checkFill = (e) => {
@@ -154,6 +192,7 @@ class Testing extends Component {
     };
 
     createStatInfo = (lang, words) => {
+        const {settings} = this.state;
         const lrId = uuidv4();
         const learnRecord = {
             id: lrId,
@@ -186,17 +225,22 @@ class Testing extends Component {
             question1.stat = stat;
             question1.word = w;
             questions.push(question1);
-            // F->m
-            const question2 = this.createQuestion(w, 2);
-            question2.stat = stat;
-            question2.word = w;
-            questions.push(question2);
-            // SENTENCE
-            const question3 = this.createQuestion(w, 3);
-            if (question3) {
-                question3.stat = stat;
-                question3.word = w;
-                questions.push(question3);
+
+            if (settings.fm) {
+                // F->m
+                const question2 = this.createQuestion(w, 2);
+                question2.stat = stat;
+                question2.word = w;
+                questions.push(question2);
+            }
+            if (settings.sentence) {
+                // SENTENCE
+                const question3 = this.createQuestion(w, 3);
+                if (question3) {
+                    question3.stat = stat;
+                    question3.word = w;
+                    questions.push(question3);
+                }
             }
         });
 
@@ -226,8 +270,10 @@ class Testing extends Component {
             // }
 
             let sentences = [];
-            word.explains.forEach(exp=>{sentences = sentences.concat(exp.sentences);});
-            sentences = sentences.filter(st=>st.word);
+            word.explains.forEach(exp => {
+                sentences = sentences.concat(exp.sentences);
+            });
+            sentences = sentences.filter(st => st.word);
             sentence = sentences[Math.floor(Math.random() * sentences.length)];
 
         }
@@ -254,7 +300,7 @@ class Testing extends Component {
     };
 
     render() {
-        const {questions, currentQuestion, showAnswer, fillKey} = this.state;
+        const {questions, currentQuestion, showAnswer, fillKey, mode} = this.state;
 
         const leftCount = questions.filter(q => {
             return !(q.pass || q.stat.finished);
@@ -265,6 +311,8 @@ class Testing extends Component {
             return (<span></span>);
         }
 
+        const word = currentQuestion.word;
+
         return (
             <div className={styles.wrapper}>
                 <Card bordered={false}
@@ -272,63 +320,111 @@ class Testing extends Component {
                 >
                     <div className={styles.header}>
                         <div className={styles.count}><span>{`${leftCount}/${totalCount}`}</span></div>
-                        <div className={styles.finished}><a onClick={() => this.setFinished()}>已掌握</a></div>
+                        <div className={styles.btns}>
+                            <a onClick={() => this.answerRight()}><Icon type="check"/></a>
+                            <a onClick={() => this.answerWrong()}><Icon type="close"/></a>
+                            <a onClick={() => {
+                                if(mode == 'A') {
+                                    this.setState({mode: 'V'})
+                                }
+                                else{
+                                    this.setState({mode: 'A'})
+                                }
+                            }}>{mode=='A'?'查看':'关闭'}</a>
+                            <a onClick={() => this.setFinished()}>已掌握</a>
+                        </div>
                     </div>
                 </Card>
-<div ref={qpanel => this.qpanel = qpanel} >
-                <Card
-                    style={{marginTop: 24}}
-                    bordered={false}
-                    bodyStyle={{padding: '8px 32px 20px 32px'}}
-                >
-
-                    <Fragment>
-                        <div
-                            style={{visibility: (currentQuestion.type == 1 || (currentQuestion.type != 1 && showAnswer)) ? 'visible' : 'hidden'}}>
-                            <div>
-                                <span className={styles.wordSpell}>{currentQuestion.word.spell}</span>
+                <div ref={qpanel => this.qpanel = qpanel} style={{display: (mode=='A'?'block':'none')}}>
+                    <Card
+                        style={{marginTop: 24}}
+                        bordered={false}
+                        bodyStyle={{padding: '8px 32px 20px 32px'}}
+                    >
+                        <Fragment>
+                            <div
+                                style={{visibility: (currentQuestion.type == 1 || (currentQuestion.type != 1 && showAnswer)) ? 'visible' : 'hidden'}}>
+                                <div>
+                                    <span className={styles.wordSpell}>{currentQuestion.word.spell}</span>
+                                </div>
+                                <div>
+                                    <span className={styles.pronounce}>[{currentQuestion.word.pronounce}]</span>
+                                    <span style={{marginLeft: 10}}>
+                            <a>
+                              <Icon type="sound"/>
+                            </a>
+                            </span>
+                                </div>
                             </div>
+                            <div
+                                style={{visibility: (currentQuestion.type == 2 || (currentQuestion.type != 2 && showAnswer)) ? 'visible' : 'hidden'}}>
+                            <span className={styles.meaning}
+                                  dangerouslySetInnerHTML={{__html: currentQuestion.word.meaning}}/>
+                            </div>
+                            {currentQuestion.type == 3 &&
+                            <Fragment>
+                                <div key={fillKey}
+                                     style={{visibility: (currentQuestion.type == 3) ? 'visible' : 'hidden'}}>
+                                    <span className={styles.meaning}
+                                          dangerouslySetInnerHTML={{__html: currentQuestion.sentence.text1}}/>
+                                    <Popover content={currentQuestion.sentence.word}
+                                             visible={showAnswer && mode == 'A'}
+                                             trigger="click">
+                                        <Input
+                                            className={styles.fill}
+                                            autoFocus={true}
+                                            onPressEnter={(e) => this.checkFill(e)}></Input>
+                                    </Popover>
+                                    <span className={styles.meaning}
+                                          dangerouslySetInnerHTML={{__html: currentQuestion.sentence.text2}}/>
+                                </div>
+                                <div style={{visibility: (currentQuestion.type == 3) ? 'visible' : 'hidden'}}>
+                                    <span className={styles.meaning}
+                                          dangerouslySetInnerHTML={{__html: currentQuestion.sentence.translation}}/>
+                                </div>
+                            </Fragment>}
+
+                        </Fragment>
+
+                    </Card>
+                </div>
+                <div ref={wpanel => this.wpanel = wpanel} className={styles.wwrapper} style={{display: (mode=='V'?'grid':'none')}}>
+                    <div className={styles.word}>
+                        <div>
+                            <span className={styles.wordSpell}>{word.spell}</span>
+                        </div>
+                        {word.pronounce && (
                             <div>
-                                <span className={styles.pronounce}>[{currentQuestion.word.pronounce}]</span>
+                                <span className={styles.pronounce}>[{word.pronounce}]</span>
                                 <span style={{marginLeft: 10}}>
                             <a>
                               <Icon type="sound"/>
                             </a>
                             </span>
                             </div>
-                        </div>
-                        <div
-                            style={{visibility: (currentQuestion.type == 2 || (currentQuestion.type != 2 && showAnswer)) ? 'visible' : 'hidden'}}>
+                        )}
+                        <br/>
+                        {word.meaning && (
+                            <div>
                             <span className={styles.meaning}
-                                  dangerouslySetInnerHTML={{__html: currentQuestion.word.meaning}}/>
-                        </div>
-                        {currentQuestion.type == 3 &&
-                        <Fragment>
-                            <div key={fillKey}
-                                 style={{visibility: (currentQuestion.type == 3) ? 'visible' : 'hidden'}}>
-                                    <span className={styles.meaning}
-                                          dangerouslySetInnerHTML={{__html: currentQuestion.sentence.text1}}/>
-                                <Popover content={currentQuestion.sentence.word}
-                                         visible={showAnswer}
-                                         trigger="click">
-                                    <Input
-                                        className={styles.fill}
-                                        autoFocus={true}
-                                        onPressEnter={(e) => this.checkFill(e)}></Input>
-                                </Popover>
-                                <span className={styles.meaning}
-                                      dangerouslySetInnerHTML={{__html: currentQuestion.sentence.text2}}/>
+                                  dangerouslySetInnerHTML={{__html: word.meaning}}/>
                             </div>
-                            <div style={{visibility: (currentQuestion.type == 3) ? 'visible' : 'hidden'}}>
-                                    <span className={styles.meaning}
-                                          dangerouslySetInnerHTML={{__html: currentQuestion.sentence.translation}}/>
-                            </div>
-                        </Fragment>}
-
-                    </Fragment>
-
-                </Card>
-</div>
+                        )}
+                    </div>
+                    <div className={styles.sts}>
+                        <List
+                            size="large"
+                            rowKey="id"
+                            itemLayout="vertical"
+                            dataSource={word.explains}
+                            renderItem={item => (
+                                <List.Item key={item.id} extra={<div className={styles.listItemExtra}/>}>
+                                    <WordExplain item={item}/>
+                                </List.Item>
+                            )}
+                        />
+                    </div>
+                </div>
             </div>)
     }
 }

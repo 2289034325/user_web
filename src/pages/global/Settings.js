@@ -26,9 +26,7 @@ class Settings extends Component {
             form.validateFields((err, fieldsValue) => {
                 if (err) return;
 
-
                 const settings = {
-                    mf: fieldsValue.mf,
                     fm: fieldsValue.fm,
                     sentence: fieldsValue.sentence
                 };
@@ -49,9 +47,6 @@ class Settings extends Component {
                 className={styles.modalBody}
             >
                 <Form labelCol={{span: 6}} wrapperCol={{span: 14}}>
-                    <Form.Item label="M->F">
-                        {getFieldDecorator('mf', {valuePropName: 'checked', initialValue: !!settings.mf})(<Switch size={"small"}/>)}
-                    </Form.Item>
                     <Form.Item label="F->M">
                         {getFieldDecorator('fm', {valuePropName: 'checked', initialValue: !!settings.fm})(<Switch size={"small"}/>)}
                     </Form.Item>

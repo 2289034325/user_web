@@ -138,6 +138,7 @@ class MyWords extends Component {
             type: 'vocabulary/reviewOldWords',
             payload: param,
             callback: (words) => {
+                console.log(words);
                 if(!words.length)
                 {
                     message.warn("没有需要复习的单词");
