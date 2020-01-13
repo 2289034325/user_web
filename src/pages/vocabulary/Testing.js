@@ -31,7 +31,7 @@ class Testing extends Component {
             // 但是这个key如果放在input控件上，而且如果这个控件是唯一子控件，key似乎不生效
             // 所以需要设置在input控件的父控件上!!!
             fillKey: uuidv4(),
-            mode:'A'
+            mode: 'A'
         }
     }
 
@@ -47,9 +47,17 @@ class Testing extends Component {
     }
 
     handleKeyPress = event => {
+        const {mode} = this.state;
+        // 在查看模式下，不响应
+        if(mode == 'V'){
+            return;
+        }
+
         if (event.target.tagName == "INPUT") {
             return;
         }
+
+
 
         const key = event.key;
         const {questions, currentQuestion} = this.state;
@@ -324,18 +332,17 @@ class Testing extends Component {
                             <a onClick={() => this.answerRight()}><Icon type="check"/></a>
                             <a onClick={() => this.answerWrong()}><Icon type="close"/></a>
                             <a onClick={() => {
-                                if(mode == 'A') {
+                                if (mode == 'A') {
                                     this.setState({mode: 'V'})
-                                }
-                                else{
+                                } else {
                                     this.setState({mode: 'A'})
                                 }
-                            }}>{mode=='A'?'查看':'关闭'}</a>
+                            }}>{mode == 'A' ? '查看' : '关闭'}</a>
                             <a onClick={() => this.setFinished()}>已掌握</a>
                         </div>
                     </div>
                 </Card>
-                <div ref={qpanel => this.qpanel = qpanel} style={{display: (mode=='A'?'block':'none')}}>
+                <div ref={qpanel => this.qpanel = qpanel} style={{display: (mode == 'A' ? 'block' : 'none')}}>
                     <Card
                         style={{marginTop: 24}}
                         bordered={false}
@@ -347,14 +354,15 @@ class Testing extends Component {
                                 <div>
                                     <span className={styles.wordSpell}>{currentQuestion.word.spell}</span>
                                 </div>
-                                <div>
-                                    <span className={styles.pronounce}>[{currentQuestion.word.pronounce}]</span>
-                                    <span style={{marginLeft: 10}}>
-                            <a>
-                              <Icon type="sound"/>
-                            </a>
-                            </span>
-                                </div>
+                            </div>
+                            <div
+                                style={{visibility: showAnswer ? 'visible' : 'hidden'}}>
+                                <span className={styles.pronounce}>[{currentQuestion.word.pronounce}]</span>
+                                <span style={{marginLeft: 10}}>
+                                    <a>
+                                      <Icon type="sound"/>
+                                    </a>
+                                </span>
                             </div>
                             <div
                                 style={{visibility: (currentQuestion.type == 2 || (currentQuestion.type != 2 && showAnswer)) ? 'visible' : 'hidden'}}>
@@ -388,7 +396,8 @@ class Testing extends Component {
 
                     </Card>
                 </div>
-                <div ref={wpanel => this.wpanel = wpanel} className={styles.wwrapper} style={{display: (mode=='V'?'grid':'none')}}>
+                <div ref={wpanel => this.wpanel = wpanel} className={styles.wwrapper}
+                     style={{display: (mode == 'V' ? 'grid' : 'none')}}>
                     <div className={styles.word}>
                         <div>
                             <span className={styles.wordSpell}>{word.spell}</span>
